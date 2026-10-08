@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wireless Touchpad &amp; Mouse</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_reconnecting">Reconnecting…</string>
+    <string name="instructions">1 Finger: Smooth Move &amp; Tap to Click\n2 Fingers: Calibrated Scroll &amp; Right-Click Tap\n3 Fingers: Middle Click\nTap-and-Hold: Drag &amp; Select\nOr use dedicated buttons below!</string>
+    <string name="sensitivity_label">Sensitivity</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="host_hint">PC IP (Wi-Fi e.g. 192.168.x.x or USB 127.0.0.1)</string>
+    <string name="port_hint">Port</string>
+    <string name="left_click">LEFT CLICK</string>
+    <string name="right_click">RIGHT CLICK</string>
+    <string name="middle_click">MID</string>
+</resources>

@@ -1,0 +1,2 @@
+rootProject.name = 'usb-android-touchpad'
+include 'touchpad-protocol', 'desktop-server'

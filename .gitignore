@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+build/
+.tools/
+.gradle-dist/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android
+android-client/.idea/
+android-client/local.properties
+android-client/**/*.iml
+android-client/.cxx/
+android-client/captures/
+*.apk
+*.aab
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

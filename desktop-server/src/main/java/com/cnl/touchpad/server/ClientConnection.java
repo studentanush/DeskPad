@@ -82,13 +82,41 @@ public final class ClientConnection implements Runnable {
             int pendingMoveDx = 0;
             int pendingMoveDy = 0;
             boolean hasPendingMoves = false;
+            int pendingScrollY = 0;
+            int pendingScrollX = 0;
 
             while (!packets.isEmpty()) {
                 TouchpadPacket packet = packets.removeFirst();
                 if (packet.getType() == ProtocolConstants.TYPE_MOVE) {
+                    if (pendingScrollY != 0) {
+                        mouse.scrollVertical(pendingScrollY);
+                        pendingScrollY = 0;
+                    }
+                    if (pendingScrollX != 0) {
+                        mouse.scrollHorizontal(pendingScrollX);
+                        pendingScrollX = 0;
+                    }
                     pendingMoveDx += packet.readMoveDx();
                     pendingMoveDy += packet.readMoveDy();
                     hasPendingMoves = true;
+                    diagnostics.onPacketProcessed();
+                } else if (packet.getType() == ProtocolConstants.TYPE_SCROLL) {
+                    if (hasPendingMoves) {
+                        mouse.moveRelative(pendingMoveDx, pendingMoveDy);
+                        pendingMoveDx = 0;
+                        pendingMoveDy = 0;
+                        hasPendingMoves = false;
+                    }
+                    pendingScrollY += packet.readScrollDelta();
+                    diagnostics.onPacketProcessed();
+                } else if (packet.getType() == ProtocolConstants.TYPE_HORIZONTAL_SCROLL) {
+                    if (hasPendingMoves) {
+                        mouse.moveRelative(pendingMoveDx, pendingMoveDy);
+                        pendingMoveDx = 0;
+                        pendingMoveDy = 0;
+                        hasPendingMoves = false;
+                    }
+                    pendingScrollX += packet.readHorizontalScrollDelta();
                     diagnostics.onPacketProcessed();
                 } else {
                     if (hasPendingMoves) {
@@ -97,12 +125,26 @@ public final class ClientConnection implements Runnable {
                         pendingMoveDy = 0;
                         hasPendingMoves = false;
                     }
+                    if (pendingScrollY != 0) {
+                        mouse.scrollVertical(pendingScrollY);
+                        pendingScrollY = 0;
+                    }
+                    if (pendingScrollX != 0) {
+                        mouse.scrollHorizontal(pendingScrollX);
+                        pendingScrollX = 0;
+                    }
                     applyPacket(packet, out);
                     diagnostics.onPacketProcessed();
                 }
             }
             if (hasPendingMoves) {
                 mouse.moveRelative(pendingMoveDx, pendingMoveDy);
+            }
+            if (pendingScrollY != 0) {
+                mouse.scrollVertical(pendingScrollY);
+            }
+            if (pendingScrollX != 0) {
+                mouse.scrollHorizontal(pendingScrollX);
             }
         } catch (PacketValidationException e) {
             diagnostics.onInvalidPacket();

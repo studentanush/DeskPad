@@ -256,18 +256,35 @@ public final class TouchpadGestureHandler {
             twoFingerTapTracking = false;
         }
 
-        scrollAccumY += dy;
-        int stepsY = (int) (scrollAccumY / SCROLL_STEP_PX);
-        if (stepsY != 0) {
-            sink.onScroll(stepsY);
-            scrollAccumY -= (stepsY * SCROLL_STEP_PX);
+        float absDy = Math.abs(dy);
+        float absDx = Math.abs(dx);
+
+        // Dominant-axis locking: suppress horizontal jitter when scrolling vertically and vice versa
+        if (absDy > absDx * 1.25f) {
+            dx = 0;
+            scrollAccumX = 0;
+        } else if (absDx > absDy * 1.25f) {
+            dy = 0;
+            scrollAccumY = 0;
         }
 
-        scrollAccumX += dx;
-        int stepsX = (int) (scrollAccumX / SCROLL_STEP_PX);
-        if (stepsX != 0) {
-            sink.onHorizontalScroll(stepsX);
-            scrollAccumX -= (stepsX * SCROLL_STEP_PX);
+        // Calibrate step size using user sensitivity slider
+        float stepSize = SCROLL_STEP_PX / Math.max(0.5f, Math.min(2.0f, sensitivity));
+
+        scrollAccumY += dy;
+        int stepsY = (int) (scrollAccumY / stepSize);
+        if (stepsY != 0) {
+            sink.onScroll(stepsY);
+            scrollAccumY -= (stepsY * stepSize);
+        }
+
+        if (dx != 0) {
+            scrollAccumX += dx;
+            int stepsX = (int) (scrollAccumX / stepSize);
+            if (stepsX != 0) {
+                sink.onHorizontalScroll(stepsX);
+                scrollAccumX -= (stepsX * stepSize);
+            }
         }
     }
 
